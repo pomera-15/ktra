@@ -1,0 +1,34 @@
+{
+  "tasks": [
+    {
+      "id": "f9b21564-8f2c-48fd-9d15-be25e24bfdd6",
+      "title": "ktraコマンドでktraを起動",
+      "description": "ktraを起動するためのコマンドを実装する",
+      "deadline": null,
+      "priority": "high",
+      "status": "pending",
+      "created_at": "2025-06-22T15:39:25.984464",
+      "updated_at": "2025-06-22T15:39:25.984482"
+    },
+    {
+      "id": "31223eb4-a3ea-4d93-94c5-63dd42f38b94",
+      "title": "Display ASCII Art for ktra at Startup",
+      "description": "Display ktra in ASCII art at startup",
+      "deadline": null,
+      "priority": "medium",
+      "status": "pending",
+      "created_at": "2025-06-22T15:40:28.557877",
+      "updated_at": "2025-06-22T15:40:28.557913"
+    },
+    {
+      "id": "2820275b-ba56-4b63-835c-e67e21e06e94",
+      "title": "資料作成",
+      "description": "",
+      "deadline": "2024-11-29",
+      "priority": "high",
+      "status": "pending",
+      "created_at": "2025-06-22T15:52:58.593838",
+      "updated_at": "2025-06-22T15:52:58.593842"
+    }
+  ]
+}

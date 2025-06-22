@@ -1,0 +1,7 @@
+openai-agents
+openai
+python-dotenv
+pytest
+pytest-mock
+rich
+prompt_toolkit
