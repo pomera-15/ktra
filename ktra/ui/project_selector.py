@@ -51,7 +51,7 @@ class ProjectSelector:
         try:
             self._load_projects()
             if not self.projects:
-                self.console.print("[yellow]📁 プロジェクトがありません[/yellow]")
+                self.console.print("プロジェクトがありません")
                 if Confirm.ask("新しいプロジェクトを作成しますか？"):
                     self._handle_direct_project_creation()
                 return None
@@ -137,55 +137,31 @@ class ProjectSelector:
         # レイアウトの構築
         def get_title_text():
             filter_text = f" ({self.filter_mode})" if self.filter_mode != "all" else ""
-            return HTML(f'<ansicyan><b>📁 プロジェクト一覧{filter_text} - 矢印キーで選択, Enterで操作</b></ansicyan>')
+            return HTML(f'プロジェクト一覧{filter_text}')
         
         def get_projects_text():
             if not self.filtered_projects:
-                return HTML('<ansiyellow>プロジェクトがありません</ansiyellow>')
+                return HTML('プロジェクトがありません')
             
             lines = []
             for i, project in enumerate(self.filtered_projects):
-                # ステータスアイコン
-                status_icon = self._get_status_icon(project.status)
-                
                 # タスク数を取得
                 task_count = self._get_project_task_count(project.name)
                 
                 # 選択状態の表示
                 if i == self.selected_index:
-                    # 選択中のプロジェクト
+                    # 選択中のプロジェクト（シンプル）
                     name = project.name[:50] + "..." if len(project.name) > 50 else project.name
-                    lines.append(f'<ansiblue><b>→ {status_icon} {name} ({task_count}タスク)</b></ansiblue>')
-                    
-                    # 詳細情報（選択中のみ）
-                    if project.description:
-                        desc = project.description[:80] + "..." if len(project.description) > 80 else project.description
-                        lines.append(f'<ansigray>   📄 {desc}</ansigray>')
-                    
-                    details = []
-                    if project.due_date:
-                        details.append(f"📅 {project.due_date.strftime('%m/%d')}")
-                    if project.tags:
-                        details.append(f"🏷️ {', '.join(project.tags[:3])}")
-                    if project.folder_path:
-                        details.append(f"📁 フォルダあり")
-                    
-                    if details:
-                        lines.append(f'<ansigray>   {" | ".join(details)}</ansigray>')
-                    
+                    lines.append(f'<b>→ {name} ({task_count}タスク)</b>')
                 else:
-                    # 通常のプロジェクト
-                    name = project.name[:60] + "..." if len(project.name) > 60 else project.name
-                    lines.append(f'  {status_icon} {name} ({task_count}タスク)')
+                    # 通常のプロジェクト（シンプル）
+                    name = project.name[:50] + "..." if len(project.name) > 50 else project.name
+                    lines.append(f'  {name} ({task_count}タスク)')
             
             return HTML('\\n'.join(lines))
         
         def get_help_text():
-            return HTML('''
-<ansigray>
-操作: ↑↓ 選択  Enter 操作メニュー  n 新規作成  f フィルター  o フォルダ開く  r 更新  h ヘルプ  q 終了
-</ansigray>
-''')
+            return HTML('↑↓ 選択  Enter 操作  n 新規  f フィルター  o フォルダ開く  q 終了')
         
         # ウィンドウの作成
         title_window = Window(
@@ -260,7 +236,7 @@ class ProjectSelector:
         self._display_project_details(selected_project)
         
         # 操作メニュー
-        self.console.print("\\n[bold cyan]📋 操作を選択してください:[/bold cyan]")
+        self.console.print("\\n操作を選択してください:")
         
         actions = [
             ("1", "ステータス変更", "update_status"),
@@ -500,7 +476,7 @@ class ProjectSelector:
     
     def _handle_direct_project_creation(self) -> None:
         """直接プロジェクト作成"""
-        self.console.print("\\n[bold cyan]📁 新しいプロジェクトを作成[/bold cyan]")
+        self.console.print("\\n新しいプロジェクトを作成")
         
         # プロジェクト名の入力
         name = Prompt.ask("プロジェクト名")
@@ -546,7 +522,7 @@ class ProjectSelector:
     
     def _handle_filter_selection(self) -> None:
         """フィルター選択"""
-        self.console.print("\\n[cyan]🔍 フィルター選択:[/cyan]")
+        self.console.print("\\nフィルター選択:")
         
         filters = [
             ("1", "すべて", "all"),

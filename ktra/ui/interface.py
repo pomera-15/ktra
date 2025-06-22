@@ -7,6 +7,7 @@ from typing import Optional, Dict, Any
 from rich.console import Console
 from rich.prompt import Confirm
 from prompt_toolkit import prompt
+from prompt_toolkit.completion import Completer, Completion
 
 
 class SimpleContextManager:
@@ -24,12 +25,38 @@ class SimpleContextManager:
         # シンプルなので終了時は何もしない
         pass
 
+class CommandCompleter(Completer):
+    """カスタムコマンド補完クラス"""
+    
+    def __init__(self, commands):
+        self.commands = commands
+    
+    def get_completions(self, document, complete_event):
+        # 現在の入力を取得
+        text = document.text_before_cursor
+        
+        # /で始まる場合のみ補完
+        if text.startswith('/'):
+            # 入力されたテキストで始まるコマンドを検索
+            for command in self.commands:
+                if command.startswith(text):
+                    # 現在の入力の長さから補完部分を計算
+                    yield Completion(command, start_position=-len(text))
+
+
 class KtraInterface:
     """Simple user interface for ktra"""
     
     def __init__(self):
         self.console = Console()
         self.pending_ai_request = None
+        
+        # コマンド補完の設定
+        self.commands = [
+            "/help", "/quit", "/exit", "/clear", "/tasks", "/projects", 
+            "/models", "/tools", "/commands", "/examples"
+        ]
+        self.completer = CommandCompleter(self.commands)
     
     def show_welcome(self):
         """Simple welcome screen"""
@@ -185,10 +212,10 @@ class KtraInterface:
             return request
         
         try:
-            # Simple prompt
+            # Simple prompt with command completion
             if os.isatty(0):
-                # Terminal mode - simple prompt
-                user_input = prompt("❯ ").strip()
+                # Terminal mode - prompt with completion
+                user_input = prompt("❯ ", completer=self.completer).strip()
             else:
                 # Non-terminal mode - simple input
                 self.console.print("❯ ", end="")

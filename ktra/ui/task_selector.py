@@ -50,7 +50,7 @@ class TaskSelector:
         try:
             self._load_tasks()
             if not self.tasks:
-                self.console.print("[yellow]📝 タスクがありません[/yellow]")
+                self.console.print("タスクがありません")
                 if Confirm.ask("新しいタスクを作成しますか？"):
                     return "create_task"
                 return None
@@ -131,54 +131,28 @@ class TaskSelector:
         # レイアウトの構築
         def get_title_text():
             filter_text = f" ({self.filter_mode})" if self.filter_mode != "all" else ""
-            return HTML(f'<ansicyan><b>📝 タスク一覧{filter_text} - 矢印キーで選択, Enterで操作</b></ansicyan>')
+            return HTML(f'タスク一覧{filter_text}')
         
         def get_tasks_text():
             if not self.filtered_tasks:
-                return HTML('<ansiyellow>タスクがありません</ansiyellow>')
+                return HTML('タスクがありません')
             
             lines = []
             for i, task in enumerate(self.filtered_tasks):
-                # ステータスアイコン
-                status_icon = self._get_status_icon(task.status)
-                priority_icon = self._get_priority_icon(task.priority)
-                energy_icon = self._get_energy_icon(task.energy_required)
-                
                 # 選択状態の表示
                 if i == self.selected_index:
-                    # 選択中のタスク
-                    title = task.title[:50] + "..." if len(task.title) > 50 else task.title
-                    lines.append(f'<ansiblue><b>→ {status_icon} {priority_icon} {energy_icon} {title}</b></ansiblue>')
-                    
-                    # 詳細情報（選択中のみ）
-                    if task.description:
-                        desc = task.description[:80] + "..." if len(task.description) > 80 else task.description
-                        lines.append(f'<ansigray>   📄 {desc}</ansigray>')
-                    
-                    details = []
-                    if task.estimated_minutes:
-                        details.append(f"⏱️ {task.estimated_minutes}分")
-                    if task.project:
-                        details.append(f"📁 {task.project}")
-                    if task.due_date:
-                        details.append(f"📅 {task.due_date.strftime('%m/%d')}")
-                    
-                    if details:
-                        lines.append(f'<ansigray>   {" | ".join(details)}</ansigray>')
-                    
-                else:
-                    # 通常のタスク
+                    # 選択中のタスク（シンプル）
                     title = task.title[:60] + "..." if len(task.title) > 60 else task.title
-                    lines.append(f'  {status_icon} {priority_icon} {energy_icon} {title}')
+                    lines.append(f'<b>→ {title}</b>')
+                else:
+                    # 通常のタスク（シンプル）
+                    title = task.title[:60] + "..." if len(task.title) > 60 else task.title
+                    lines.append(f'  {title}')
             
             return HTML('\n'.join(lines))
         
         def get_help_text():
-            return HTML('''
-<ansigray>
-操作: ↑↓ 選択  Enter 操作メニュー  n 新規作成（直接）  f フィルター  r 更新  h ヘルプ  q 終了
-</ansigray>
-''')
+            return HTML('↑↓ 選択  Enter 操作  n 新規  f フィルター  q 終了')
         
         # ウィンドウの作成
         title_window = Window(
@@ -250,7 +224,7 @@ class TaskSelector:
         self._display_task_details(selected_task)
         
         # 操作メニュー
-        self.console.print("\n[bold cyan]📋 操作を選択してください:[/bold cyan]")
+        self.console.print("\n操作を選択してください:")
         
         actions = [
             ("1", "ステータス変更", "update_status"),
@@ -407,7 +381,7 @@ class TaskSelector:
     
     def _handle_direct_task_creation(self) -> None:
         """直接タスク作成（AI相談なし）"""
-        self.console.print("\n[bold cyan]📝 新しいタスクを作成[/bold cyan]")
+        self.console.print("\n新しいタスクを作成")
         
         # タスクタイトルの入力
         title = Prompt.ask("タスクのタイトル")
@@ -460,7 +434,7 @@ class TaskSelector:
     
     def _handle_filter_selection(self) -> None:
         """フィルター選択"""
-        self.console.print("\n[cyan]🔍 フィルター選択:[/cyan]")
+        self.console.print("\nフィルター選択:")
         
         filters = [
             ("1", "すべて", "all"),
