@@ -5,3 +5,4 @@ pytest
 pytest-mock
 rich
 prompt_toolkit
+pydantic>=2.0

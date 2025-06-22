@@ -1,0 +1,20 @@
+[
+  {
+    "id": "3a94937a-c9a0-47a4-a07b-7e17db1141d3",
+    "name": "テストプロジェクト",
+    "description": "プロジェクト機能のテスト用",
+    "status": "active",
+    "folder_path": "project_files/テストプロジェクト_3a94937a",
+    "created_at": "2025-06-22 22:35:12.154507",
+    "updated_at": "2025-06-22 22:35:39.307165",
+    "due_date": null,
+    "tags": [
+      "テスト",
+      "開発"
+    ],
+    "task_ids": [
+      "3e7b8501-c3ae-4b40-998f-ba89aa3a5967"
+    ],
+    "metadata": {}
+  }
+]

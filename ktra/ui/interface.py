@@ -32,6 +32,7 @@ class KtraInterface:
     def __init__(self):
         self.console = Console()
         self.history = InMemoryHistory()
+        self.pending_ai_request = None
         
         # Commands and examples for autocompletion
         self.task_examples = [
@@ -53,7 +54,7 @@ class KtraInterface:
         ]
         
         self.help_commands = [
-            "/help", "/commands", "/examples", "/quit", "/clear", "/models", "/tools"
+            "/help", "/commands", "/examples", "/quit", "/clear", "/models", "/tools", "/tasks", "/projects"
         ]
         
         all_suggestions = self.task_examples + self.shell_examples + self.help_commands
@@ -109,6 +110,8 @@ class KtraInterface:
         help_table.add_row("/clear", "画面をクリア", "/clear")
         help_table.add_row("/models", "モデル選択（数字キーで選択）", "/models")
         help_table.add_row("/tools", "利用可能なツール一覧を表示", "/tools")
+        help_table.add_row("/tasks", "インタラクティブタスク選択", "/tasks")
+        help_table.add_row("/projects", "インタラクティブプロジェクト管理", "/projects")
         help_table.add_row("/quit", "アプリケーションを終了", "/quit")
         
         self.console.print(help_table)
@@ -367,6 +370,12 @@ class KtraInterface:
     
     def get_input(self) -> str:
         """Get user input with enhanced prompt"""
+        # pending_ai_requestがある場合はそれを返す
+        if self.pending_ai_request:
+            request = self.pending_ai_request
+            self.pending_ai_request = None
+            return request
+        
         try:
             # Check if stdin is a terminal before using advanced features
             if os.isatty(0):
@@ -558,7 +567,50 @@ class KtraInterface:
             self.show_tools()
             return True
         
+        elif user_input.lower() == "/tasks":
+            result = self.enter_task_mode()
+            if result and result.startswith("ai_request:"):
+                # AI支援リクエストを処理するため、メインループに返す
+                ai_request = result[11:]  # "ai_request:" を除去
+                self.pending_ai_request = ai_request
+                return False  # メインループでAI処理を続行
+            return True
+        
+        elif user_input.lower() == "/projects":
+            self.enter_project_mode()
+            return True
+        
         return False
+    
+    def enter_task_mode(self) -> Optional[str]:
+        """Enter interactive task selector"""
+        try:
+            from ..ui.task_selector import TaskSelector
+            
+            selector = TaskSelector()
+            result = selector.run()
+            
+            return result
+            
+        except ImportError as e:
+            self.console.print(f"[red]❌ タスクセレクターの読み込みに失敗しました: {str(e)}[/red]")
+            return None
+        except Exception as e:
+            self.console.print(f"[red]❌ タスクセレクターでエラーが発生しました: {str(e)}[/red]")
+            return None
+    
+    def enter_project_mode(self) -> None:
+        """Enter interactive project selector"""
+        try:
+            from ..ui.project_selector import ProjectSelector
+            
+            selector = ProjectSelector()
+            selector.run()
+            
+        except ImportError as e:
+            self.console.print(f"[red]❌ プロジェクトセレクターの読み込みに失敗しました: {str(e)}[/red]")
+        except Exception as e:
+            self.console.print(f"[red]❌ プロジェクトセレクターでエラーが発生しました: {str(e)}[/red]")
     
     def confirm_action(self, message: str) -> bool:
         """Ask for user confirmation"""
