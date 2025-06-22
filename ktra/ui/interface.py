@@ -1,195 +1,60 @@
 """
-Enhanced user interface for ktra using rich and prompt_toolkit
+Simple user interface for ktra
 """
 
 import os
-from typing import List, Optional, Dict, Any
+from typing import Optional, Dict, Any
 from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.prompt import Confirm
-from rich.text import Text
-from rich.layout import Layout
-from rich.live import Live
-from rich.align import Align
 from prompt_toolkit import prompt
-from prompt_toolkit.history import InMemoryHistory
-from prompt_toolkit.completion import WordCompleter, FuzzyCompleter
-from prompt_toolkit.shortcuts import confirm
-from prompt_toolkit.formatted_text import HTML
-from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.application import Application
-from prompt_toolkit.layout.containers import HSplit, Window
-from prompt_toolkit.layout.controls import FormattedTextControl
-from prompt_toolkit.layout import Layout as PTLayout
-import time
-import threading
 
 class KtraInterface:
-    """Enhanced user interface for ktra"""
+    """Simple user interface for ktra"""
     
     def __init__(self):
         self.console = Console()
-        self.history = InMemoryHistory()
         self.pending_ai_request = None
-        
-        # Commands and examples for autocompletion
-        self.task_examples = [
-            "明日までに資料作成",
-            "来週までにプレゼン準備", 
-            "今日やることは？",
-            "タスク一覧を見せて",
-            "進捗状況を教えて",
-            "完了したタスクを表示",
-        ]
-        
-        self.shell_examples = [
-            "ls",
-            "pwd", 
-            "git status",
-            "git log",
-            "システム情報を教えて",
-            "現在のディレクトリは？",
-        ]
-        
-        self.help_commands = [
-            "/help", "/commands", "/examples", "/quit", "/clear", "/models", "/tools", "/tasks", "/projects"
-        ]
-        
-        all_suggestions = self.task_examples + self.shell_examples + self.help_commands
-        self.completer = FuzzyCompleter(WordCompleter(all_suggestions, ignore_case=True))
     
     def show_welcome(self):
-        """Welcome screen with enhanced styling"""
+        """Simple welcome screen"""
         self.console.clear()
         
-        # ASCII Art for ktra (Beautiful box drawing style)
-        ascii_art = """
-[bright_blue]  ██╗  ██╗████████╗███████╗ █████╗ 
-  ██║ ██╔╝╚══██╔══╝██╔══██╗██╔══██╗
-  █████╔╝    ██║   ███████╔╝███████║
-  ██╔═██╗    ██║   ██╔══██╗██╔══██║
-  ██║  ██╗   ██║   ██║  ╚██╗██║  ██║
-  ╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝╚═╝  ╚═╝[/bright_blue]
-        """
-        
-        # Display ASCII art
-        self.console.print(Align.center(ascii_art))
-        
-        # Main title and subtitle with Claude Code style
-        self.console.print(Align.center("[bold magenta]🤖 ktra (カトレア)[/bold magenta]"))
-        self.console.print(Align.center("[bright_black]Personal AI Agent powered by OpenAI[/bright_black]"))
+        # Simple title
+        self.console.print()
+        self.console.print("[bold blue]ktra[/bold blue] [dim]- Personal AI Agent[/dim]")
         self.console.print()
         
-        # Quick start info with Claude Code style
-        self.console.print("[bold cyan]Quick Start[/bold cyan]")
-        info_items = [
-            ("💡 ヒント:", "自然言語でタスクの追加や管理ができます"),
-            ("📋 例:", "'明日までに資料作成' → タスクが自動登録"),
-            ("💻 コマンド:", "'ls' や 'git status' などの安全なコマンドも実行可能"),
-            ("❓ ヘルプ:", "/help でコマンド一覧を表示"),
-            ("🔄 終了:", "/quit または Ctrl+C で終了")
-        ]
-        
-        for label, description in info_items:
-            self.console.print(f"  [bright_black]⎿[/bright_black] [yellow]{label}[/yellow] [white]{description}[/white]")
-        
+        # Essential info only
+        self.console.print("[dim]タスク追加:[/dim] '明日までに資料作成'")
+        self.console.print("[dim]コマンド:[/dim] /tasks, /projects, /help")
         self.console.print()
     
     def show_help(self):
-        """Display help information"""
-        help_table = Table(title="🔧 利用可能なコマンド", show_header=True, header_style="bold magenta")
-        help_table.add_column("コマンド", style="cyan", width=15)
-        help_table.add_column("説明", style="white")
-        help_table.add_column("例", style="dim", width=30)
-        
-        help_table.add_row("/help", "このヘルプを表示", "/help")
-        help_table.add_row("/commands", "利用可能なシェルコマンド一覧", "/commands")
-        help_table.add_row("/examples", "使用例を表示", "/examples")
-        help_table.add_row("/clear", "画面をクリア", "/clear")
-        help_table.add_row("/models", "モデル選択（数字キーで選択）", "/models")
-        help_table.add_row("/tools", "利用可能なツール一覧を表示", "/tools")
-        help_table.add_row("/tasks", "インタラクティブタスク選択", "/tasks")
-        help_table.add_row("/projects", "インタラクティブプロジェクト管理", "/projects")
-        help_table.add_row("/quit", "アプリケーションを終了", "/quit")
-        
-        self.console.print(help_table)
+        """Display simple help information"""
+        self.console.print("[bold]コマンド:[/bold]")
+        self.console.print("  /tasks     - タスク管理")
+        self.console.print("  /projects  - プロジェクト管理")
+        self.console.print("  /clear     - 画面クリア")
+        self.console.print("  /quit      - 終了")
         self.console.print()
         
-        # Task management examples with Claude Code style
-        self.console.print("[bold green]📝 タスク管理の例[/bold green]")
-        examples = [
-            ("明日までに資料作成", "新しいタスクを追加"),
-            ("今日やることは？", "今日のタスク一覧を表示"),
-            ("資料作成タスク完了", "指定したタスクを完了にする"),
-            ("進捗状況を教えて", "全体の進捗を要約")
-        ]
-        
-        for example, action in examples:
-            self.console.print(f"  [bright_black]⎿[/bright_black] [yellow]{example}[/yellow] → [white]{action}[/white]")
-        
+        self.console.print("[bold]使い方:[/bold]")
+        self.console.print("  タスク作成: '明日までに資料作成'")
+        self.console.print("  シェル実行: 'git status'")
         self.console.print()
     
     def show_commands(self):
-        """Display available shell commands with Claude Code style"""
-        self.console.print("[bold blue]💻 利用可能なシェルコマンド[/bold blue]")
-        
-        commands = [
-            ("ls", "ファイル・ディレクトリ一覧"),
-            ("pwd", "現在のディレクトリパス"),
-            ("git status", "Gitの状態確認"),
-            ("git log", "コミット履歴表示"),
-            ("git diff", "変更差分表示"),
-            ("date", "現在の日時"),
-            ("whoami", "現在のユーザー名"),
-            ("echo", "文字列の出力"),
-        ]
-        
-        for cmd, desc in commands:
-            self.console.print(f"  [bright_black]⎿[/bright_black] [cyan]{cmd}[/cyan] - [white]{desc}[/white]")
-        
+        """Display simple shell commands"""
+        self.console.print("[bold]シェルコマンド:[/bold]")
+        self.console.print("  ls, pwd, git status, git log, date")
         self.console.print()
     
     def show_examples(self):
-        """Display usage examples with Claude Code style"""
-        self.console.print("[bold green]📚 使用例[/bold green]")
-        self.console.print()
-        
-        # Task management examples
-        self.console.print("[bold yellow]タスク管理:[/bold yellow]")
-        task_examples = [
-            "明日までに請求書送っておくこと",
-            "今週中にプレゼン資料作成", 
-            "今日やることは？",
-            "完了したタスクを見せて",
-            "請求書送付タスク完了"
-        ]
-        for example in task_examples:
-            self.console.print(f"  [bright_black]⎿[/bright_black] [white]{example}[/white]")
-        self.console.print()
-        
-        # Information examples
-        self.console.print("[bold yellow]情報確認:[/bold yellow]")
-        info_examples = [
-            "システム情報を教えて",
-            "現在のディレクトリは？",
-            "git status",
-            "ls"
-        ]
-        for example in info_examples:
-            self.console.print(f"  [bright_black]⎿[/bright_black] [cyan]{example}[/cyan]")
-        self.console.print()
-        
-        # Dialog examples
-        self.console.print("[bold yellow]対話例:[/bold yellow]")
-        dialog_examples = [
-            "進捗状況を教えて",
-            "優先度の高いタスクは？",
-            "今週の予定を要約して"
-        ]
-        for example in dialog_examples:
-            self.console.print(f"  [bright_black]⎿[/bright_black] [magenta]{example}[/magenta]")
+        """Display simple examples"""
+        self.console.print("[bold]使用例:[/bold]")
+        self.console.print("  '明日までに資料作成'")
+        self.console.print("  '今日やることは？'")
+        self.console.print("  'git status'")
         self.console.print()
     
     def show_models(self):
@@ -207,21 +72,18 @@ class KtraInterface:
             "gpt-4o-mini": "GPT-4oの軽量版、高速で効率的"
         }
         
-        # Claude Code style model display
-        self.console.print(f"[bold blue]⏺ Models[/bold blue]")
-        self.console.print(f"  [green]⎿  Current: {current_model}[/green]")
+        # Simple model display
+        self.console.print(f"[bold]現在のモデル:[/bold] {current_model}")
         self.console.print()
         
         # Available models list
-        self.console.print("[bold magenta]📋 利用可能なモデル（数字キーで選択）[/bold magenta]")
+        self.console.print("[bold]利用可能なモデル:[/bold]")
         for i, model in enumerate(models, 1):
-            is_current = "[green]✓[/green]" if model == current_model else " "
-            description = model_descriptions.get(model, "")
-            current_mark = " [green](current)[/green]" if model == current_model else ""
-            self.console.print(f"  {is_current} [cyan]{i}[/cyan]. [yellow]{model}[/yellow] - [bright_black]{description}[/bright_black]{current_mark}")
+            is_current = "✓" if model == current_model else " "
+            self.console.print(f"  {is_current} {i}. {model}")
         
         self.console.print()
-        self.console.print("[yellow]💡 使用方法: 数字を入力してEnter、またはqでキャンセル[/yellow]")
+        self.console.print("数字を入力してEnter、qでキャンセル")
         
         # Get user selection
         try:
@@ -290,82 +152,12 @@ class KtraInterface:
         self.console.print()
     
     def show_tools(self):
-        """Display available tools interface with Claude Code style"""
-        # Claude Code style tools display
-        self.console.print("[bold blue]⏺ Tools[/bold blue]")
-        self.console.print("  [green]⎿  7 tools available[/green]")
-        self.console.print()
-        
-        tools_info = [
-            {
-                "name": "add_task",
-                "description": "新しいタスクを追加",
-                "example": "明日までに資料作成",
-                "category": "タスク管理"
-            },
-            {
-                "name": "list_tasks", 
-                "description": "タスク一覧を表示",
-                "example": "今日やることは？",
-                "category": "タスク管理"
-            },
-            {
-                "name": "update_task",
-                "description": "タスクを更新・完了",
-                "example": "資料作成タスク完了",
-                "category": "タスク管理"
-            },
-            {
-                "name": "execute_command",
-                "description": "安全なシェルコマンドを実行",
-                "example": "ls, pwd, git status",
-                "category": "システム"
-            },
-            {
-                "name": "get_system_info",
-                "description": "システム情報を取得",
-                "example": "システム情報を教えて",
-                "category": "システム"
-            },
-            {
-                "name": "change_model",
-                "description": "使用するAIモデルを変更",
-                "example": "モデルを gpt-4 に変更して",
-                "category": "設定"
-            },
-            {
-                "name": "get_current_model",
-                "description": "現在のモデル設定を表示",
-                "example": "現在のモデルは？",
-                "category": "設定"
-            }
-        ]
-        
-        # Group by category
-        categories = {}
-        for tool in tools_info:
-            cat = tool["category"]
-            if cat not in categories:
-                categories[cat] = []
-            categories[cat].append(tool)
-        
-        # Color mapping for categories
-        category_colors = {
-            "タスク管理": "green",
-            "システム": "blue", 
-            "設定": "magenta"
-        }
-        
-        # Display by category with Claude Code style
-        for category, tools in categories.items():
-            color = category_colors.get(category, "white")
-            self.console.print(f"[bold {color}]📂 {category}[/bold {color}]")
-            for tool in tools:
-                self.console.print(f"  [bright_black]⎿[/bright_black] [cyan]{tool['name']}[/cyan] - [bright_black]{tool['description']}[/bright_black]")
-                self.console.print(f"      [yellow]例:[/yellow] [white]{tool['example']}[/white]")
-            self.console.print()
-        
-        self.console.print("[yellow]💡 これらのツールは自然言語で呼び出すことができます[/yellow]")
+        """Display simple tools list"""
+        self.console.print("[bold]利用可能な機能:[/bold]")
+        self.console.print("  タスク管理 - 追加、一覧、更新")
+        self.console.print("  プロジェクト管理 - 作成、管理")
+        self.console.print("  シェル実行 - 安全なコマンド実行")
+        self.console.print("  知識管理 - メモの保存・検索")
         self.console.print()
     
     def get_input(self) -> str:
@@ -377,20 +169,13 @@ class KtraInterface:
             return request
         
         try:
-            # Check if stdin is a terminal before using advanced features
+            # Simple prompt
             if os.isatty(0):
-                # Terminal mode - use full features with enhanced colors
-                prompt_text = HTML('<ansibrightgreen>❯</ansibrightgreen> ')
-                user_input = prompt(
-                    prompt_text,
-                    history=self.history,
-                    completer=self.completer,
-                    complete_style='column',
-                    mouse_support=True,
-                ).strip()
+                # Terminal mode - simple prompt
+                user_input = prompt("❯ ").strip()
             else:
-                # Non-terminal mode - use simple input with enhanced colors
-                self.console.print("[bright_green]❯[/bright_green] ", end="")
+                # Non-terminal mode - simple input
+                self.console.print("❯ ", end="")
                 user_input = input().strip()
             
             return user_input
@@ -399,139 +184,55 @@ class KtraInterface:
             return "/quit"
     
     def show_thinking(self, message: str = "考え中..."):
-        """Show thinking animation"""
-        return Progress(
-            SpinnerColumn(),
-            TextColumn(f"[blue]{message}[/blue]"),
-            console=self.console,
-            transient=True
-        )
+        """Show simple thinking indicator"""
+        self.console.print(f"[dim]{message}[/dim]")
     
-    def show_detailed_thinking(self, steps: List[str]):
-        """Show detailed thinking process with steps (without panel)"""
-        self.console.print("[bold cyan]🧠 エージェントの思考過程[/bold cyan]")
-        for step in steps:
-            self.console.print(f"🔄 {step}")
-        self.console.print()
+    def show_detailed_thinking(self, steps):
+        """Skip detailed thinking"""
+        pass
     
     def show_agent_thinking(self, message: str = "考え中..."):
-        """Show agent thinking with Claude Code style"""
-        self.console.print(f"[bright_blue]✻ Thinking…[/bright_blue]")
-        self.console.print()
+        """Show simple thinking indicator"""
+        self.console.print(f"[dim]{message}[/dim]")
     
     def show_thinking_detail(self, reasoning: str):
-        """Show detailed thinking process with Claude Code style indentation"""
-        # Split reasoning into paragraphs and wrap text
-        paragraphs = reasoning.strip().split('\n\n')
-        
-        for paragraph in paragraphs:
-            if paragraph.strip():
-                # Wrap text to fit nicely with indentation
-                lines = paragraph.strip().split('\n')
-                for line in lines:
-                    if line.strip():
-                        self.console.print(f"  [bright_black]{line.strip()}[/bright_black]")
-                self.console.print()
+        """Skip thinking detail"""
+        pass
     
     def show_tool_execution(self, tool_name: str, params: dict = None, file_info: str = None):
-        """Show tool execution with Claude Code style"""
-        if file_info:
-            self.console.print(f"[bold green]⏺ {tool_name}([cyan]{file_info}[/cyan])[/bold green]")
-        else:
-            self.console.print(f"[bold green]⏺ {tool_name}[/bold green]")
-        
-        if params:
-            # Show parameters in a nice format
-            for key, value in params.items():
-                if isinstance(value, str) and len(value) > 80:
-                    value = value[:77] + "..."
-                self.console.print(f"  [yellow]{key}:[/yellow] [white]{repr(value)}[/white]")
+        """Skip tool execution display"""
+        pass
     
     def show_tool_result(self, result: str, success: bool = True, expand_hint: str = None):
-        """Show tool execution result with Claude Code style"""
-        if success:
-            if expand_hint:
-                self.console.print(f"  [bright_black]⎿  {expand_hint}[/bright_black]")
-            else:
-                # Truncate long results but show structure
-                if len(result) > 120:
-                    lines = result.split('\n')
-                    if len(lines) > 3:
-                        self.console.print(f"  [bright_black]⎿  {len(lines)} lines (ctrl+r to expand)[/bright_black]")
-                    else:
-                        display_result = result[:117] + "..."
-                        self.console.print(f"  [bright_black]⎿  {display_result}[/bright_black]")
-                else:
-                    self.console.print(f"  [green]⎿  {result}[/green]")
-        else:
-            self.console.print(f"  [red]⎿  Error: {result}[/red]")
-        
-        self.console.print()
+        """Skip tool result display"""
+        pass
     
     def show_action_start(self, action: str):
-        """Show action starting with Claude Code style"""
-        self.console.print(f"[bold blue]⏺ {action}[/bold blue]")
-        self.console.print()
+        """Skip action display"""
+        pass
     
     def show_agent_reasoning(self, reasoning: str):
-        """Show agent's reasoning process with Claude Code style"""
-        self.console.print(f"[bright_blue]✻ Thinking…[/bright_blue]")
-        self.console.print()
-        self.show_thinking_detail(reasoning)
-        self.console.print()
+        """Skip reasoning display"""
+        pass
     
     def show_agent_action(self, action: str, details: str = ""):
-        """Show what action the agent is taking (without panel)"""
-        self.console.print(f"[bold yellow]🎯 Agent Action:[/bold yellow]")
-        self.console.print(f"🎯 {action}")
-        if details:
-            self.console.print(f"💡 {details}")
-        self.console.print()
+        """Skip action display"""
+        pass
     
     def display_response(self, response: str, response_type: str = "assistant"):
-        """Display assistant response with Claude Code style"""
+        """Display simple response"""
         
         if response_type == "assistant":
-            # Claude Code style response display
-            self.console.print(f"[bold magenta]⏺ Response[/bold magenta]")
-            
-            # Split response into lines and display with proper indentation
-            lines = response.strip().split('\n')
-            if len(lines) == 1 and len(response) < 100:
-                # Short response
-                self.console.print(f"  [cyan]⎿  {response}[/cyan]")
-            else:
-                # Longer response with expand hint
-                preview = lines[0][:80] + "..." if len(lines[0]) > 80 else lines[0]
-                if len(lines) > 1:
-                    self.console.print(f"  [bright_black]⎿  {len(lines)} lines - {preview}[/bright_black]")
-                else:
-                    self.console.print(f"  [bright_black]⎿  {preview}[/bright_black]")
-                
-                # Show full response with indentation and colors
-                self.console.print()
-                for line in lines:
-                    if line.strip():
-                        # Color code different types of content
-                        if line.startswith('✅') or line.startswith('🎯'):
-                            self.console.print(f"  [green]{line}[/green]")
-                        elif line.startswith('❌') or line.startswith('⚠️'):
-                            self.console.print(f"  [red]{line}[/red]")
-                        elif line.startswith('📝') or line.startswith('📋'):
-                            self.console.print(f"  [blue]{line}[/blue]")
-                        elif line.startswith('💡') or line.startswith('ℹ️'):
-                            self.console.print(f"  [yellow]{line}[/yellow]")
-                        else:
-                            self.console.print(f"  [white]{line}[/white]")
+            # Simple response display
+            self.console.print(response)
         
         elif response_type == "system":
-            # System messages with Claude Code style
-            self.console.print(f"[bright_black]⏺ System: {response}[/bright_black]")
+            # System messages
+            self.console.print(f"[dim]{response}[/dim]")
         
         elif response_type == "error":
-            # Error messages with Claude Code style
-            self.console.print(f"[bold red]⏺ Error[/bold red]")
-            self.console.print(f"  [red]⎿  {response}[/red]")
+            # Error messages
+            self.console.print(f"[red]Error: {response}[/red]")
         
         self.console.print()
     
@@ -617,20 +318,8 @@ class KtraInterface:
         return Confirm.ask(message)
     
     def show_status(self, status_info: Dict[str, Any]):
-        """Display current status information"""
-        status_table = Table(title="📊 Status", show_header=False, box=None)
-        status_table.add_column(style="cyan", width=15)
-        status_table.add_column(style="white")
-        
+        """Display simple status information"""
+        self.console.print("[bold]状態:[/bold]")
         for key, value in status_info.items():
-            status_table.add_row(f"{key}:", str(value))
-        
-        status_panel = Panel(
-            status_table,
-            title="Current Status",
-            border_style="dim",
-            padding=(0, 1)
-        )
-        
-        self.console.print(status_panel)
+            self.console.print(f"  {key}: {value}")
         self.console.print()
