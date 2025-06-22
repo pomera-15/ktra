@@ -7,10 +7,14 @@ ktra - Personal AI Agent
 import sys
 import os
 import asyncio
+from dotenv import load_dotenv
 from .agent import create_ktra_agent
 from agents import Runner
 from .ui.interface import KtraInterface
 from .agent_monitor import create_enhanced_agent_runner
+
+# Load environment variables at startup
+load_dotenv()
 
 def check_api_key():
     """

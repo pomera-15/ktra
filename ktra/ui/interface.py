@@ -8,6 +8,22 @@ from rich.console import Console
 from rich.prompt import Confirm
 from prompt_toolkit import prompt
 
+
+class SimpleContextManager:
+    """Simple context manager for thinking display"""
+    
+    def __init__(self, console, message: str):
+        self.console = console
+        self.message = message
+    
+    def __enter__(self):
+        self.console.print(f"[dim]{self.message}[/dim]")
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # シンプルなので終了時は何もしない
+        pass
+
 class KtraInterface:
     """Simple user interface for ktra"""
     
@@ -184,8 +200,8 @@ class KtraInterface:
             return "/quit"
     
     def show_thinking(self, message: str = "考え中..."):
-        """Show simple thinking indicator"""
-        self.console.print(f"[dim]{message}[/dim]")
+        """Show simple thinking indicator with context manager support"""
+        return SimpleContextManager(self.console, message)
     
     def show_detailed_thinking(self, steps):
         """Skip detailed thinking"""
