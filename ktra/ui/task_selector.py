@@ -223,24 +223,16 @@ class TaskSelector:
         # タスク詳細を表示
         self._display_task_details(selected_task)
         
-        # 操作メニュー
-        self.console.print("\n操作を選択してください:")
-        
+        # 操作メニュー（矢印キー選択）
         actions = [
-            ("1", "ステータス変更", "update_status"),
-            ("2", "詳細を編集", "edit_task"),
-            ("3", "AIに相談", "ai_assist"),
-            ("4", "削除", "delete_task"),
-            ("5", "キャンセル", "cancel")
+            ("ステータス変更", "update_status"),
+            ("詳細を編集", "edit_task"),
+            ("AIに相談", "ai_assist"),
+            ("削除", "delete_task"),
+            ("キャンセル", "cancel")
         ]
         
-        for num, name, _ in actions:
-            self.console.print(f"  {num}. {name}")
-        
-        choice = Prompt.ask("選択（1-5）", choices=["1", "2", "3", "4", "5"], default="5")
-        
-        action_map = {action[0]: action[2] for action in actions}
-        selected_action = action_map[choice]
+        selected_action = self._show_action_selector(actions, selected_task.title)
         
         if selected_action == "cancel":
             return None
@@ -678,3 +670,87 @@ class TaskSelector:
         except Exception as e:
             self.console.print(f"[red]❌ プロジェクトの作成に失敗しました: {str(e)}[/red]")
             return None
+    
+    def _show_action_selector(self, actions, title: str) -> Optional[str]:
+        """矢印キーで操作を選択するセレクター"""
+        selected_index = 0
+        
+        kb = KeyBindings()
+        
+        @kb.add('up')
+        def _(event):
+            nonlocal selected_index
+            selected_index = max(0, selected_index - 1)
+        
+        @kb.add('down')
+        def _(event):
+            nonlocal selected_index
+            selected_index = min(len(actions) - 1, selected_index + 1)
+        
+        @kb.add('enter')
+        def _(event):
+            event.app.exit(result=actions[selected_index][1])
+        
+        @kb.add('c-c')
+        def _(event):
+            event.app.exit(result="cancel")
+        
+        @kb.add('q')
+        def _(event):
+            event.app.exit(result="cancel")
+        
+        def get_title_text():
+            return HTML(f'操作選択: {title[:40]}...' if len(title) > 40 else f'操作選択: {title}')
+        
+        def get_actions_text():
+            lines = []
+            for i, (name, _) in enumerate(actions):
+                if i == selected_index:
+                    lines.append(f'<b>→ {name}</b>')
+                else:
+                    lines.append(f'  {name}')
+            return HTML('\\n'.join(lines))
+        
+        def get_help_text():
+            return HTML('↑↓ 選択  Enter 実行  q キャンセル')
+        
+        # ウィンドウの作成
+        title_window = Window(
+            content=FormattedTextControl(get_title_text),
+            height=1,
+            dont_extend_width=True
+        )
+        
+        actions_window = Window(
+            content=FormattedTextControl(get_actions_text),
+            wrap_lines=True
+        )
+        
+        help_window = Window(
+            content=FormattedTextControl(get_help_text),
+            height=1,
+            dont_extend_width=True
+        )
+        
+        # レイアウト
+        layout = Layout(
+            HSplit([
+                title_window,
+                actions_window,
+                help_window,
+            ])
+        )
+        
+        # アプリケーション
+        app = Application(
+            layout=layout,
+            key_bindings=kb,
+            full_screen=False,
+            mouse_support=False,
+        )
+        
+        try:
+            result = app.run()
+            return result if result else "cancel"
+        except KeyboardInterrupt:
+            return "cancel"
