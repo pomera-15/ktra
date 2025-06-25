@@ -130,8 +130,8 @@ class TaskSelector:
         
         # レイアウトの構築
         def get_title_text():
-            filter_text = f" ({self.filter_mode})" if self.filter_mode != "all" else ""
-            return HTML(f'タスク一覧{filter_text}')
+            filter_text = f" [{self.filter_mode.upper()}]" if self.filter_mode != "all" else ""
+            return HTML(f'<ansigreen>═══ TASK DATABASE{filter_text} ═══</ansigreen>')
         
         def get_tasks_text():
             if not self.filtered_tasks:
@@ -141,18 +141,18 @@ class TaskSelector:
             for i, task in enumerate(self.filtered_tasks):
                 # 選択状態の表示
                 if i == self.selected_index:
-                    # 選択中のタスク（シンプル）
+                    # 選択中のタスク（レトロ風）
                     title = task.title[:60] + "..." if len(task.title) > 60 else task.title
-                    lines.append(f'<b>→ {title}</b>')
+                    lines.append(f'<ansicyan>▶ [{str(i+1).zfill(3)}] {title}</ansicyan>')
                 else:
-                    # 通常のタスク（シンプル）
+                    # 通常のタスク（レトロ風）
                     title = task.title[:60] + "..." if len(task.title) > 60 else task.title
-                    lines.append(f'  {title}')
+                    lines.append(f'  <ansigreen>[{str(i+1).zfill(3)}]</ansigreen> {title}')
             
             return HTML('\n'.join(lines))
         
         def get_help_text():
-            return HTML('↑↓ 選択  Enter 操作  n 新規  f フィルター  q 終了')
+            return HTML('<ansigreen>[↑↓]</ansigreen> Navigate  <ansigreen>[ENTER]</ansigreen> Select  <ansigreen>[N]</ansigreen> New  <ansigreen>[F]</ansigreen> Filter  <ansigreen>[Q]</ansigreen> Exit')
         
         # ウィンドウの作成
         title_window = Window(

@@ -136,8 +136,8 @@ class ProjectSelector:
         
         # レイアウトの構築
         def get_title_text():
-            filter_text = f" ({self.filter_mode})" if self.filter_mode != "all" else ""
-            return HTML(f'プロジェクト一覧{filter_text}')
+            filter_text = f" [{self.filter_mode.upper()}]" if self.filter_mode != "all" else ""
+            return HTML(f'<ansigreen>═══ PROJECT DATABASE{filter_text} ═══</ansigreen>')
         
         def get_projects_text():
             if not self.filtered_projects:
@@ -150,18 +150,18 @@ class ProjectSelector:
                 
                 # 選択状態の表示
                 if i == self.selected_index:
-                    # 選択中のプロジェクト（シンプル）
+                    # 選択中のプロジェクト（レトロ風）
                     name = project.name[:50] + "..." if len(project.name) > 50 else project.name
-                    lines.append(f'<b>→ {name} ({task_count}タスク)</b>')
+                    lines.append(f'<ansicyan>▶ [{str(i+1).zfill(3)}] {name} <ansigreen>[{task_count} TASKS]</ansigreen></ansicyan>')
                 else:
-                    # 通常のプロジェクト（シンプル）
+                    # 通常のプロジェクト（レトロ風）
                     name = project.name[:50] + "..." if len(project.name) > 50 else project.name
-                    lines.append(f'  {name} ({task_count}タスク)')
+                    lines.append(f'  <ansigreen>[{str(i+1).zfill(3)}]</ansigreen> {name} <ansigreen>[{task_count} TASKS]</ansigreen>')
             
             return HTML('\\n'.join(lines))
         
         def get_help_text():
-            return HTML('↑↓ 選択  Enter 操作  n 新規  f フィルター  o フォルダ開く  q 終了')
+            return HTML('<ansigreen>[↑↓]</ansigreen> Navigate  <ansigreen>[ENTER]</ansigreen> Select  <ansigreen>[N]</ansigreen> New  <ansigreen>[F]</ansigreen> Filter  <ansigreen>[O]</ansigreen> Open  <ansigreen>[Q]</ansigreen> Exit')
         
         # ウィンドウの作成
         title_window = Window(
