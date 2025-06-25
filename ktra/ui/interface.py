@@ -59,48 +59,61 @@ class KtraInterface:
         self.completer = CommandCompleter(self.commands)
     
     def show_welcome(self):
-        """Welcome screen with ASCII art"""
+        """Simple retro welcome screen without boxes"""
         self.console.clear()
         
-        # KTRA AGENT 3D ASCII Art
+        # シンプルなASCII Art
         ascii_art = """
-    ██╗  ██╗████████╗██████╗  █████╗     ██╗     ██╗
-   ██╔╝ ██╔╝╚══██╔══╝██╔══██╗██╔══██╗   ██╔╝    ██╔╝
-  ██╔╝ ██╔╝    ██║   ██████╔╝███████║  ██╔╝    ██╔╝
- ██╔╝ ██╔╝     ██║   ██╔══██╗██╔══██║ ██╔╝    ██╔╝
-██╔╝ ██╔╝      ██║   ██║  ██║██║  ██║██╔╝    ██╔╝
-╚═╝ ╚═╝       ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝
+    ██╗  ██╗████████╗██████╗  █████╗ 
+    ██║ ██╔╝╚══██╔══╝██╔══██╗██╔══██╗
+    █████╔╝    ██║   ██████╔╝███████║
+    ██╔═██╗    ██║   ██╔══██╗██╔══██║
+    ██║  ██╗   ██║   ██║  ██║██║  ██║
+    ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝
 
- █████╗  ██████╗ ███████╗███╗   ██╗████████╗██╗     ██╗
-██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝╚██╗   ██╔╝
-███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║    ╚██╗ ██╔╝
-██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║     ╚████╔╝
-██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║      ╚██╔╝
-╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝       ╚═╝
+     █████╗  ██████╗ ███████╗███╗   ██╗████████╗
+    ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝
+    ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║   
+    ██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║   
+    ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║   
+    ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝   
         """
         
-        self.console.print("[bold cyan]" + ascii_art + "[/bold cyan]")
-        self.console.print("[bold blue]Personal AI Agent - あなたの生産性をサポート[/bold blue]")
+        # レトロターミナル風表示
+        self.console.print("[bold green]" + ascii_art + "[/bold green]")
+        
+        # シンプルなステータス表示
+        self.console.print("[bold yellow]▶ AI ENGINE:[/bold yellow] [bold green]ONLINE[/bold green]  [bold yellow]▶ MEMORY:[/bold yellow] [bold green]ACTIVE[/bold green]  [bold yellow]▶ NETWORK:[/bold yellow] [bold green]CONNECTED[/bold green]")
         self.console.print()
         
-        # Essential info only
-        self.console.print("[dim]タスク追加:[/dim] '明日までに資料作成'")
-        self.console.print("[dim]コマンド:[/dim] /tasks, /projects, /help, /models")
-        self.console.print("[dim]Web検索:[/dim] 'Pythonについて調べて'")
+        # レトロコマンドラインプロンプト風
+        self.console.print("[bold cyan]KTRA AGENT v1.0.0[/bold cyan] - [dim]Personal AI Assistant[/dim]")
+        self.console.print("[dim]Type commands or natural language queries[/dim]")
+        self.console.print()
+        
+        # コマンド情報をシンプルに
+        self.console.print("[bold cyan]AVAILABLE COMMANDS:[/bold cyan]")
+        self.console.print("[bold yellow]/tasks[/bold yellow]     - Task management interface")
+        self.console.print("[bold yellow]/projects[/bold yellow]  - Project management interface")  
+        self.console.print("[bold yellow]/help[/bold yellow]      - Display help information")
+        self.console.print("[bold yellow]/models[/bold yellow]    - AI model selection")
         self.console.print()
     
     def show_help(self):
-        """Display simple help information"""
-        self.console.print("[bold]コマンド:[/bold]")
-        self.console.print("  /tasks     - タスク管理")
-        self.console.print("  /projects  - プロジェクト管理")
-        self.console.print("  /clear     - 画面クリア")
-        self.console.print("  /quit      - 終了")
+        """Display retro cyberpunk help information"""
+        self.console.print("[bold cyan]KTRA AGENT HELP SYSTEM[/bold cyan]")
         self.console.print()
-        
-        self.console.print("[bold]使い方:[/bold]")
-        self.console.print("  タスク作成: '明日までに資料作成'")
-        self.console.print("  シェル実行: 'git status'")
+        self.console.print("[bold yellow]COMMANDS:[/bold yellow]")
+        self.console.print("  [bold cyan]/tasks[/bold cyan]     → Task management interface")
+        self.console.print("  [bold cyan]/projects[/bold cyan]  → Project management interface")
+        self.console.print("  [bold cyan]/models[/bold cyan]    → AI model selection")
+        self.console.print("  [bold cyan]/clear[/bold cyan]     → Clear screen")
+        self.console.print("  [bold cyan]/quit[/bold cyan]      → Exit application")
+        self.console.print()
+        self.console.print("[bold yellow]NATURAL LANGUAGE:[/bold yellow]")
+        self.console.print("  • Task creation: '明日までに資料作成'")
+        self.console.print("  • Shell commands: 'git status'")
+        self.console.print("  • Web search: 'Pythonについて調べて'")
         self.console.print()
     
     def show_commands(self):
@@ -229,13 +242,13 @@ class KtraInterface:
             return request
         
         try:
-            # Simple prompt with command completion
+            # Retro cyberpunk prompt with command completion
             if os.isatty(0):
                 # Terminal mode - prompt with completion
-                user_input = prompt("❯ ", completer=self.completer).strip()
+                user_input = prompt("▶ ", completer=self.completer).strip()
             else:
                 # Non-terminal mode - simple input
-                self.console.print("❯ ", end="")
+                self.console.print("▶ ", end="")
                 user_input = input().strip()
             
             return user_input
@@ -243,9 +256,10 @@ class KtraInterface:
         except (KeyboardInterrupt, EOFError):
             return "/quit"
     
-    def show_thinking(self, message: str = "考え中..."):
-        """Show simple thinking indicator with context manager support"""
-        return SimpleContextManager(self.console, message)
+    def show_thinking(self, message: str = "Processing..."):
+        """Show retro thinking indicator with context manager support"""
+        retro_message = f"[bold yellow]▶ PROCESSING:[/bold yellow] [cyan]{message}[/cyan] [blink]█[/blink]"
+        return SimpleContextManager(self.console, retro_message)
     
     def show_detailed_thinking(self, steps):
         """Skip detailed thinking"""
@@ -280,19 +294,21 @@ class KtraInterface:
         pass
     
     def display_response(self, response: str, response_type: str = "assistant"):
-        """Display simple response"""
+        """Display retro cyberpunk response"""
         
         if response_type == "assistant":
-            # Simple response display
-            self.console.print(response)
+            # Simple AI response without boxes
+            self.console.print("[bold green]▶ AI RESPONSE:[/bold green]")
+            self.console.print("[cyan]" + response + "[/cyan]")
         
         elif response_type == "system":
-            # System messages
-            self.console.print(f"[dim]{response}[/dim]")
+            # System messages with retro styling
+            self.console.print(f"[bold yellow]▶ SYSTEM:[/bold yellow] [dim]{response}[/dim]")
         
         elif response_type == "error":
-            # Error messages
-            self.console.print(f"[red]Error: {response}[/red]")
+            # Simple error messages without boxes
+            self.console.print("[bold red]▶ ERROR:[/bold red]")
+            self.console.print(f"[red]{response}[/red]")
         
         self.console.print()
     
@@ -300,7 +316,10 @@ class KtraInterface:
         """Handle special UI commands. Returns True if handled."""
         
         if user_input.lower() in ["/quit", "/exit", "quit", "exit"]:
-            self.console.print("[yellow]👋 ktraを終了します。お疲れ様でした！[/yellow]")
+            self.console.print("[bold yellow]KTRA AGENT SHUTTING DOWN[/bold yellow]")
+            self.console.print()
+            self.console.print("[cyan]Thank you for using KTRA![/cyan]")
+            self.console.print("[dim]See you next time...[/dim]")
             return True
         
         elif user_input.lower() == "/help":
