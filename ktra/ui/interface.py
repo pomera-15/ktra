@@ -59,17 +59,34 @@ class KtraInterface:
         self.completer = CommandCompleter(self.commands)
     
     def show_welcome(self):
-        """Simple welcome screen"""
+        """Welcome screen with ASCII art"""
         self.console.clear()
         
-        # Simple title
-        self.console.print()
-        self.console.print("[bold blue]ktra[/bold blue] [dim]- Personal AI Agent[/dim]")
+        # KTRA AGENT 3D ASCII Art
+        ascii_art = """
+    ██╗  ██╗████████╗██████╗  █████╗     ██╗     ██╗
+   ██╔╝ ██╔╝╚══██╔══╝██╔══██╗██╔══██╗   ██╔╝    ██╔╝
+  ██╔╝ ██╔╝    ██║   ██████╔╝███████║  ██╔╝    ██╔╝
+ ██╔╝ ██╔╝     ██║   ██╔══██╗██╔══██║ ██╔╝    ██╔╝
+██╔╝ ██╔╝      ██║   ██║  ██║██║  ██║██╔╝    ██╔╝
+╚═╝ ╚═╝       ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝
+
+ █████╗  ██████╗ ███████╗███╗   ██╗████████╗██╗     ██╗
+██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝╚██╗   ██╔╝
+███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║    ╚██╗ ██╔╝
+██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║     ╚████╔╝
+██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║      ╚██╔╝
+╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝       ╚═╝
+        """
+        
+        self.console.print("[bold cyan]" + ascii_art + "[/bold cyan]")
+        self.console.print("[bold blue]Personal AI Agent - あなたの生産性をサポート[/bold blue]")
         self.console.print()
         
         # Essential info only
         self.console.print("[dim]タスク追加:[/dim] '明日までに資料作成'")
-        self.console.print("[dim]コマンド:[/dim] /tasks, /projects, /help")
+        self.console.print("[dim]コマンド:[/dim] /tasks, /projects, /help, /models")
+        self.console.print("[dim]Web検索:[/dim] 'Pythonについて調べて'")
         self.console.print()
     
     def show_help(self):
