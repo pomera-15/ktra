@@ -1,7 +1,7 @@
 import pytest
 import sys
 from unittest.mock import patch, MagicMock
-from main import check_api_key, main
+from ktra.main import check_api_key, main
 
 class TestCheckApiKey:
     """API キーチェック機能のテスト"""

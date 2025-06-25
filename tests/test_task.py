@@ -4,7 +4,7 @@ import os
 import tempfile
 import shutil
 from unittest.mock import patch
-from tools.task import _add_task as add_task, _list_tasks as list_tasks, _update_task as update_task, TaskManager
+from ktra.tools.task import _add_task as add_task, _list_tasks as list_tasks, _update_task as update_task, TaskManager
 
 class TestTaskManager:
     def setup_method(self):

@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from tools.shell import _execute_command as execute_command, _get_system_info as get_system_info
+from ktra.tools.shell import _execute_command as execute_command, _get_system_info as get_system_info
 
 class TestExecuteCommand:
     
