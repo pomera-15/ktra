@@ -9,6 +9,7 @@ from .tools.knowledge import save_knowledge, search_knowledge, get_knowledge_sta
 from .tools.analytics import analyze_productivity, find_task_patterns, predict_task_completion, generate_daily_summary
 from .tools.context import update_work_context, get_current_context, start_focus_session, update_preferences, get_work_environment_suggestion
 from .tools.project import create_project, list_projects, get_project_details, update_project_status, add_task_to_project, read_project_file, create_project_note, search_project_files
+from .tools.web_search import web_search, search_news
 
 load_dotenv()
 
@@ -45,7 +46,9 @@ def create_ktra_agent(model: str = None) -> Agent:
             # コンテキスト管理
             update_work_context, get_current_context, start_focus_session, update_preferences, get_work_environment_suggestion,
             # プロジェクト管理
-            create_project, list_projects, get_project_details, update_project_status, add_task_to_project, read_project_file, create_project_note, search_project_files
+            create_project, list_projects, get_project_details, update_project_status, add_task_to_project, read_project_file, create_project_note, search_project_files,
+            # Web検索
+            web_search, search_news
         ],
         model=model
     )
